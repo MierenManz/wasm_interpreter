@@ -1,25 +1,23 @@
-import { ValueKind } from "./common.ts";
-
-interface BigIntValue {
-  kind: "i64";
-  inner: bigint;
-}
+import type { ValueKind } from "./common.ts";
 
 interface NumberValue {
-  kind: Omit<ValueKind, "i64">;
-  inner: number;
+  kind: Exclude<ValueKind, "i64">;
+  value: number;
 }
 
-export type Value = BigIntValue | NumberValue;
+export type Value = NumberValue;
 
-export interface Func {
-  params: Value[];
-  result: ValueKind[];
-  locals: Value[];
+export interface FunctionResources {
   stack: Value[];
-  instructions: Uint8Array;
+  locals: Value[];
+  result: ValueKind[];
+  params: Value[];
+  cfStack: number[];
 }
 
 export interface Module {
-  functionSpace: Func[];
+  functionSpace: FunctionResources[];
+  // globalSpace: Global[];
+  // memorySpace: Memory[];
+  // tableSpace: Table[];
 }

@@ -1,25 +1,76 @@
-import { ValueKind } from "./common.ts";
+import type {
+  ExternalKind,
+  GlobalDescriptor,
+  ResizableLimits,
+  ValueKind,
+} from "./common.ts";
 
 export interface FunctionSignature {
   params: ValueKind[];
   result: ValueKind[];
 }
 
-export interface CodeBody {
-  locals: ValueKind[];
+interface Local {
+  count: number;
+  kind: ValueKind;
+}
+
+export interface FunctionBody {
+  locals: Local[];
   instructions: Uint8Array;
+}
+
+export interface ImportBase {
+  moduleName: string;
+  exportName: string;
+}
+
+interface FuncImport extends ImportBase {
+  kind: "func";
+  signatureIndex: number;
+}
+
+interface TableOrMemoryImport extends ImportBase {
+  kind: "table" | "memory";
+  descriptor: ResizableLimits;
+}
+
+interface GlobalImport extends ImportBase {
+  kind: "global";
+  descriptor: GlobalDescriptor;
+}
+
+export type Import = FuncImport | TableOrMemoryImport | GlobalImport;
+
+export interface Export {
+  kind: ExternalKind;
+  spaceIndex: number;
+}
+
+export interface TableElement {
+  tableIndex: number;
+  offset: number;
+  /** Function space indices */
+  elements: number[];
+}
+
+export interface DataSlices {
+  /** Should be 0 */
+  memoryIndex: number;
+  offset: number;
+  slice: Uint8Array;
 }
 
 export interface Module {
   typeSection: FunctionSignature[];
-  // importSection:
+  importSection: Import[];
   functionSection: number[];
-  // tableSection:
-  // memorySection:
-  // globalSection:
-  // exportSection:
-  // startSection:
-  // elementSection:
-  codeSection: CodeBody[];
-  // dataSection:
+  tableSection: ResizableLimits[];
+  memorySection: ResizableLimits[];
+  globalSection: GlobalDescriptor[];
+  exportSection: Export[];
+  startSection: number | null;
+  elementSection: TableElement[];
+  codeSection: FunctionBody[];
+  dataSection: DataSlices[];
 }

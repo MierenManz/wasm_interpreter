@@ -1,90 +1,76 @@
-import { decodeVarint } from "../deps.ts";
+import { decodeVarint } from "../util/varint.ts";
+
 import type { Compiled } from "../types/mod.ts";
+import type { Reader } from "../util/reader.ts";
 
-export function call<
-  T extends Array<number> | Array<bigint> | Array<number | bigint>,
->(
-  module: Compiled.Module,
-  fnIndex: number,
-  ...parameters: Array<number | bigint>
-): T | bigint | number {
-  const func = module.functionSpace[fnIndex];
-
-  if (func.params.length !== parameters.length) {
-    throw new Error("Parameter count does not match");
-  }
-
-  // Loop over all parameters
-  for (let i = 0; i < func.params.length; i++) {
-    const funcParameter = func.params[i];
-    const param = parameters[i];
-
-    // Check if parameter should be passed as a bigint
-    if (funcParameter.kind === "i64" && typeof param !== "bigint") {
-      throw new Error("Invalid type");
-    }
-
-    // Set parameter value
-    switch (funcParameter.kind) {
-      case "i32":
-        funcParameter.inner = (param as number) | 0;
-        break;
-      case "i64":
-        funcParameter.inner = BigInt.asIntN(64, param as bigint);
-        break;
-      case "f32":
-        funcParameter.inner = Float32Array.of(param as number)[0];
-        break;
-      case "f64":
-        funcParameter.inner = Float64Array.of(param as number)[0];
-        break;
-    }
-  }
-
-  // Reset function locals
-  for (let i = 0; i < func.locals.length; i++) {
-    func.locals[i].inner = 0;
-  }
-  // Reset stack
-  func.stack = [];
-
-  for (let i = 0; i < func.instructions.length;) {
-    const byte = func.instructions[i];
-    i++;
-    switch (byte) {
+export function interpret(
+  _: unknown, //module: Compiled.Module,
+  reader: Reader,
+  resources: Compiled.FunctionResources,
+) {
+  while (!reader.isConsumed()) {
+    const instr = reader.readUint8();
+    switch (instr) {
       // local.get
       case 0x20: {
-        const [ptr, bytesUsed] = decodeVarint(func.instructions, i);
-        i = bytesUsed;
-        const value = ptr < func.params.length
-          ? func.params[ptr]
-          : func.locals[ptr - func.params.length];
-        func.stack.push(value);
-        break;
-      }
-      // i32.add
-      case 0x6A: {
-        const a = func.stack.pop();
-        const b = func.stack.pop();
-
-        if (a === undefined || b === undefined) throw new Error("Empty stack");
-        if (a.kind !== "i32" || b.kind !== "i32") {
-          throw new Error("Invalid type on the stack");
+        const ptr = decodeVarint(reader);
+        if (ptr >= resources.locals.length || ptr < 0) {
+          throw new RangeError("Invalid Index");
         }
-        func.stack.push({ kind: "i32", inner: a.inner + b.inner });
+
+        // Reference
+        const val = resources.locals[ptr];
+        // Deep copy to push onto the stack
+        resources.stack.push(structuredClone(val));
         break;
       }
-      // End (but nop for now)
-      case 0x0B:
+
+      // i32.add
+
+      case 0x6A: {
+        const a = resources.stack.pop();
+        const b = resources.stack.pop();
+        if (!a || !b) throw new Error("Expected i32. Found void");
+        if (a.kind !== "i32" || b.kind !== "i32") {
+          throw new Error(`Expected [i32, i32]. Found [${a.kind}, ${b.kind}]`);
+        }
+
+        const res: Compiled.Value = { kind: "i32", value: a.value + b.value };
+        resources.stack.push(res);
         break;
+      }
+
+      // End
+
+      case 0x0B: {
+        // Throw if there is a unexpected end
+        if (resources.cfStack.length === 0 && !reader.isConsumed()) {
+          throw new Error("Unexpected end");
+        }
+
+        if (resources.cfStack.length > 0) {
+          // Only needs to pop the last controlflow frame.
+          // Branch calls need to set the reader.
+          resources.cfStack.pop()!;
+          break;
+        }
+
+        if (
+          resources.result.length !== resources.stack.length ||
+          resources.result.some((x, i) => x !== resources.stack[i].kind)
+        ) {
+          throw new Error(
+            `Expected: ${resources.result} but found: ${
+              resources.stack.map((x) => x.kind)
+            }`,
+          );
+        }
+
+        break;
+      }
+
       default:
-        throw new Error("Unimplemented");
+        throw new Error("Unknown instruction");
     }
   }
-
-  func.stack = func.stack.filter((x) => x !== undefined);
-  // Possibly return a single value
-  if (func.stack.length === 1) return func.stack[0].inner;
-  // Return everything left on the stack
-  return func.stack.map((x) => x.inner) as T;
 }

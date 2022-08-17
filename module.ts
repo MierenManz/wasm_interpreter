@@ -7,10 +7,10 @@ import { decodeVarint } from "./util/varint.ts";
 import { decodeFnBody } from "./decoders/code_section.ts";
 import { decodeTable } from "./decoders/table_section.ts";
 import { generateFunctions } from "./generators/codegen.ts";
-import { Exports, generateExports } from "./generators/export.ts";
+import { generateExports } from "./generators/export.ts";
 import { interpret } from "./interpreter/mod.ts";
-import type { Compiled, Decoded } from "./types/mod.ts";
 import { decodeExport } from "./decoders/export_section.ts";
+import type { Compiled, Decoded } from "./types/mod.ts";
 
 const KIND_TO_DECODER: Record<
   number,
@@ -66,7 +66,7 @@ function decodeModule(reader: Reader): Decoded.Module {
 export function instanciateModule(
   bytes: Uint8Array,
   _imports: WebAssembly.Imports | null = null,
-): Exports {
+): Record<string, CallableFunction> {
   const reader = new Reader(bytes);
 
   if (reader.readUint32(true) !== 0x6D736100) {

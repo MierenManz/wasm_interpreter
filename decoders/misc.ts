@@ -1,4 +1,4 @@
-import { BYTE_TO_KIND } from "../util/misc.ts";
+import { VALUE_KIND } from "../util/misc.ts";
 import { decodeVarint } from "../util/varint.ts";
 import type { Reader } from "../util/reader.ts";
 import type {
@@ -24,7 +24,7 @@ export function decodeArray<T>(
 }
 
 export function decodeValue(reader: Reader): ValueKind {
-  const kind = BYTE_TO_KIND[reader.readUint8()];
+  const kind = VALUE_KIND[reader.readUint8()];
   if (!kind) throw new Error("Invalid type signature");
   return kind;
 }
@@ -57,4 +57,8 @@ export function decodeGlobalDescriptor(reader: Reader): GlobalDescriptor {
     kind: kind,
     mutable: isMutByte === 0x01,
   };
+}
+
+export function decodeIdentifier(reader: Reader): string {
+  return reader.readString(decodeVarint(reader));
 }

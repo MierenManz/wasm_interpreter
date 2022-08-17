@@ -10,13 +10,8 @@ export interface FunctionSignature {
   result: ValueKind[];
 }
 
-interface Local {
-  count: number;
-  kind: ValueKind;
-}
-
 export interface FunctionBody {
-  locals: Local[];
+  locals: ValueKind[];
   instructions: Uint8Array;
 }
 
@@ -45,6 +40,7 @@ export type Import = FuncImport | TableOrMemoryImport | GlobalImport;
 export interface Export {
   kind: ExternalKind;
   spaceIndex: number;
+  exportName: string;
 }
 
 export interface TableElement {

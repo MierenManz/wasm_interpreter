@@ -41,7 +41,7 @@ Deno.test({
         const decodedBody = decodeFnBody(new Reader(fnBody));
 
         assertEquals(decodedBody, {
-          locals: [{ count: 1, kind: "i32" }],
+          locals: ["i32"],
           instructions: new Uint8Array(),
         });
       },
@@ -62,7 +62,7 @@ Deno.test({
         const decodedBody = decodeFnBody(new Reader(fnBody));
 
         assertEquals(decodedBody, {
-          locals: [{ count: 2, kind: "i32" }, { count: 1, kind: "f32" }],
+          locals: ["i32", "i32", "f32"],
           instructions: new Uint8Array(),
         });
       },
@@ -92,7 +92,7 @@ Deno.test({
         const decodedBody = decodeFnBody(new Reader(fnBody));
 
         assertEquals(decodedBody, {
-          locals: [{ count: 1, kind: "i32" }],
+          locals: ["i32"],
           instructions: Uint8Array.of(0x20, 0x00, 0x20, 0x01, 0x6A, 0x0B),
         });
       },

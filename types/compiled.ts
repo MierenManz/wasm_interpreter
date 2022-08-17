@@ -7,16 +7,20 @@ interface NumberValue {
 
 export type Value = NumberValue;
 
-export interface FunctionResources {
+export interface FunctionContext {
   stack: Value[];
   locals: Value[];
   result: ValueKind[];
-  params: Value[];
   cfStack: number[];
 }
 
+export interface Func {
+  instructions: Uint8Array;
+  callable: CallableFunction;
+}
+
 export interface Module {
-  functionSpace: FunctionResources[];
+  funcSpace: Func[];
   // globalSpace: Global[];
   // memorySpace: Memory[];
   // tableSpace: Table[];

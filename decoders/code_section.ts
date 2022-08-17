@@ -9,7 +9,7 @@ export function decodeFnBody(reader: Reader): FunctionBody {
   const locals = decodeArray(
     reader,
     (r) => ({ count: decodeVarint(r), kind: decodeValue(r) }),
-  );
+  ).map((x) => new Array(x.count).fill(x.kind)).flat();
 
   const instructionSize = totalBodySize - (reader.getReadHead() - preLocalHead);
 

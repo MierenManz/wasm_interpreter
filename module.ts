@@ -1,13 +1,16 @@
 import { Reader } from "./util/reader.ts";
 import { parseSection } from "./util/section.ts";
-
-import type { Compiled, Decoded } from "./types/mod.ts";
 import { decodeArray, decodeResizableLimits } from "./decoders/misc.ts";
 import { decodeSignature } from "./decoders/type_section.ts";
 import { decodeImport } from "./decoders/import_section.ts";
 import { decodeVarint } from "./util/varint.ts";
 import { decodeFnBody } from "./decoders/code_section.ts";
 import { decodeTable } from "./decoders/table_section.ts";
+import { generateFunctions } from "./generators/codegen.ts";
+import { Exports, generateExports } from "./generators/export.ts";
+import { interpret } from "./interpreter/mod.ts";
+import type { Compiled, Decoded } from "./types/mod.ts";
+import { decodeExport } from "./decoders/export_section.ts";
 
 const KIND_TO_DECODER: Record<
   number,
@@ -21,7 +24,7 @@ const KIND_TO_DECODER: Record<
   0x05: (reader, mod) =>
     mod.memorySection = decodeArray(reader, decodeResizableLimits),
   // 0x06: "globalSection",
-  // 0x07: "exportSection",
+  0x07: (Reader, mod) => mod.exportSection = decodeArray(Reader, decodeExport),
   // 0x08: "startSection",
   // 0x09: "elementSection",
   0x0A: (reader, mod) => mod.codeSection = decodeArray(reader, decodeFnBody),
@@ -62,8 +65,8 @@ function decodeModule(reader: Reader): Decoded.Module {
 
 export function instanciateModule(
   bytes: Uint8Array,
-  _imports: WebAssembly.Imports,
-): Decoded.Module {
+  _imports: WebAssembly.Imports | null = null,
+): Exports {
   const reader = new Reader(bytes);
 
   if (reader.readUint32(true) !== 0x6D736100) {
@@ -76,17 +79,22 @@ export function instanciateModule(
 
   const decodedModule = decodeModule(reader);
 
-  const _compiledModule: Compiled.Module = {
-    functionSpace: [],
+  const compiledModule: Compiled.Module = {
+    funcSpace: [],
     // globalSpace: [],
     // memorySpace: [],
     // tableSpace: [],
   };
 
-  // compileFunctionSpace(decodedModule, compiledModule);
-  // compileGlobalSpace(decodedModule, compiledModule);
-  // compileMemorySpace(decodedModule, compiledModule);
-  // compileTableSpace(decodedModule, compiledModule);
+  compiledModule.funcSpace = generateFunctions(decodedModule)
+    .map((x, i) => ({
+      callable: x(compiledModule, interpret, Reader),
+      instructions: decodedModule.codeSection[i].instructions,
+    }));
 
-  return decodedModule;
+  console.log(compiledModule.funcSpace);
+  return generateExports(
+    compiledModule,
+    decodedModule.exportSection,
+  );
 }

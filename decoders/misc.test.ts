@@ -44,6 +44,16 @@ Deno.test({
         );
       },
     });
+    await t.step({
+      name: "Invalid Flags throw",
+      fn: () => {
+        const reader = new Reader(Uint8Array.of(0x02, 0x02, 0x01));
+        assertThrows(
+          () => decodeResizableLimits(reader),
+          "Invalid Flags",
+        );
+      },
+    });
   },
 });
 

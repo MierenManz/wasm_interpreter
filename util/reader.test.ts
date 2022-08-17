@@ -1,5 +1,5 @@
 import { Reader } from "./reader.ts";
-import { assert, assertEquals } from "../_test_deps.ts";
+import { assert, assertEquals, assertThrows } from "../_test_deps.ts";
 Deno.test({
   name: "Reader: Normal",
   fn: async (t) => {
@@ -8,6 +8,7 @@ Deno.test({
       fn: () => {
         const f = new Reader(Uint8Array.of(0x00));
         assertEquals(f.readUint8(), 0);
+        assertThrows(() => f.readUint8(), "Out of bound");
       },
     });
 
@@ -43,6 +44,7 @@ Deno.test({
         f.setReadHead(0);
 
         assertEquals(firstSlice, f.readSlice(5));
+        assertThrows(() => f.setReadHead(-1));
       },
     });
 

@@ -15,23 +15,28 @@ export class Reader {
     );
   }
 
+  #checkOutOfBound(length: number) {
+    if ((this.#inner.length - this.#ptr) < length) {
+      throw new RangeError("Out of bound");
+    }
+  }
+
   readUint8(): number {
+    this.#checkOutOfBound(1);
     const byte = this.#inner[this.#ptr];
     this.#ptr++;
     return byte;
   }
 
   readUint32(littleEndian: boolean): number {
+    this.#checkOutOfBound(4);
     const int = this.#dataview.getUint32(this.#ptr, littleEndian);
     this.#ptr += 4;
     return int;
   }
 
   readSlice(length: number): Uint8Array {
-    if ((this.#inner.length - this.#ptr) < length) {
-      throw new RangeError("Out of bound");
-    }
-
+    this.#checkOutOfBound(length);
     const end = this.#ptr + length;
     const slice = this.#inner.subarray(this.#ptr, end);
     this.#ptr = end;

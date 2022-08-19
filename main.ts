@@ -1,7 +1,7 @@
-import { instanciateModule } from "./module.ts";
+import { instantiateModule } from "./module.ts";
 
 const bytes = Deno.readFileSync("mod.wasm");
-const module = instanciateModule(
+const module = instantiateModule(
   bytes,
 );
 

@@ -63,7 +63,7 @@ function decodeModule(reader: Reader): Decoded.Module {
   return decodedModule;
 }
 
-export function instanciateModule(
+export function instantiateModule(
   bytes: Uint8Array,
   _imports: WebAssembly.Imports | null = null,
 ): Record<string, CallableFunction> {
@@ -92,7 +92,6 @@ export function instanciateModule(
       instructions: decodedModule.codeSection[i].instructions,
     }));
 
-  console.log(compiledModule.funcSpace);
   return generateExports(
     compiledModule,
     decodedModule.exportSection,

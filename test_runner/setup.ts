@@ -13,12 +13,12 @@ export async function setup() {
 
 async function compile() {
   Deno.chdir(new URL("../testdata", import.meta.url));
-  for await (const entry of Deno.readDir("./")) {
+  for await (const entry of Deno.readDir("../testsuite")) {
     if (
       entry.isFile && entry.name.endsWith(".wast") &&
       !entry.name.includes("simd")
     ) {
-      await run(`compiling ${entry.name}`, [
+      await run(`compiling ${entry.name}`.padEnd(40), [
         "wast2json",
         `../testsuite/${entry.name}`,
       ]);

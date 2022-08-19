@@ -8,6 +8,7 @@ export async function setup() {
     recursive: true,
   });
   await compile();
+  await clear();
   console.log("Setup complete");
 }
 
@@ -22,6 +23,15 @@ async function compile() {
         "wast2json",
         `../testsuite/${entry.name}`,
       ]);
+    }
+  }
+}
+
+async function clear() {
+  // Still in `../testdata`
+  for await (const entry of Deno.readDir("./")) {
+    if (entry.isFile && entry.name.endsWith(".wat")) {
+      Deno.remove(entry.name);
     }
   }
 }

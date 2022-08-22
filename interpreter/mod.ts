@@ -1,6 +1,6 @@
-import * as Local from "./local.ts";
-import * as I32 from "./i32.ts";
-import * as ControlFlow from "./control_flow.ts";
+import * as Local from "./instructions/local.ts";
+import * as I32 from "./instructions/i32.ts";
+import * as ControlFlow from "./instructions/control_flow.ts";
 
 import type { Compiled } from "../types/mod.ts";
 import type { Reader } from "../util/reader.ts";

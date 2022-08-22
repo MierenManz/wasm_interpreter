@@ -1,6 +1,6 @@
 import * as Local from "./local.ts";
 import * as I32 from "./i32.ts";
-import * as Misc from "./misc.ts";
+import * as ControlFlow from "./control_flow.ts";
 
 import type { Compiled } from "../types/mod.ts";
 import type { Reader } from "../util/reader.ts";
@@ -15,9 +15,22 @@ type Instructions = Record<
 >;
 
 const instructions: Instructions = {
+  // Local instructions
   0x20: Local.get,
+  0x21: Local.set,
+  0x22: Local.tee,
+
+  // I32 instructions
   0x6A: I32.add,
-  0x0B: Misc.end,
+  0x6B: I32.sub,
+  0x6C: I32.mul,
+  0x6D: I32.divS,
+  0x6E: I32.divU,
+  0x6F: I32.remS,
+  0x70: I32.remU,
+
+  // Control flow instructions
+  0x0B: ControlFlow.end,
 };
 
 export function interpret(

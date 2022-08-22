@@ -74,3 +74,67 @@ export function generateFunctions(
 
   return array;
 }
+
+const U32MAX = 0xFFFFFFFF;
+const I32MAX = (U32MAX - 1) / 2;
+const I32MIN = I32MAX - U32MAX;
+
+const U64MAX = 0xFFFFFFFFFFFFFFFFn;
+const I64MAX = (U64MAX - 1n) / 2n;
+const I64MIN = I64MAX - U64MAX;
+
+type OpFn = (
+  module: Compiled.Module,
+  reader: Reader,
+  context: Compiled.FunctionContext,
+) => void;
+
+type MaybeSignedOp = "/" | "%";
+type NormalOp =
+  | "+"
+  | "-"
+  | "*"
+  | "&"
+  | "|"
+  | "^"
+  | ">>"
+  | "<<"
+  | ">>>";
+
+type Op = MaybeSignedOp | NormalOp;
+
+export function generateIntegerOperation(
+  intKind: "i32" | "i64",
+  op: MaybeSignedOp,
+  signed: boolean,
+): OpFn;
+export function generateIntegerOperation(
+  intKind: "i32" | "i64",
+  op: NormalOp,
+): OpFn;
+export function generateIntegerOperation(
+  intKind: "i32" | "i64",
+  op: Op,
+  signed = false,
+): OpFn {
+  const errorMessage =
+    `Expected [${intKind}, ${intKind}], but found [\${a?.kind ?? "void"}, \${b?.kind ?? "void"}]`;
+  const abs = signed ? "Math.abs" : "";
+  const operation = `${abs}(${abs}(a.value) ${op} ${abs}(b.value))`;
+  const MIN = intKind === "i32" ? I32MIN : (I64MIN.toString() + "n");
+  const MAX = intKind === "i32" ? I32MAX : (I64MAX.toString() + "n");
+  const body = `
+    const a = context.stack.pop();
+    const b = context.stack.pop();
+    if (!a || !b || a.kind !== "${intKind}" || b.kind !== "${intKind}") {
+      throw new Error(\`${errorMessage}\`)
+    }
+
+    const val = ${operation};
+    if (val < (${MIN})) throw new RangeError("Byte underflow");
+    if (val > ${MAX}) throw new RangeError("Byte overflow");
+    context.stack.push({ kind: "${intKind}", value: val });
+  `;
+
+  return new Function("module", "reader", "context", body) as OpFn;
+}

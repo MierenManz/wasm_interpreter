@@ -1,184 +1,22 @@
-import type { FunctionContext } from "../../types/compiled.ts";
+import { generateIntegerOperation } from "../../generators/codegen.ts";
+import { decodeSignedVarint } from "../../util/varint.ts";
 import type { Compiled } from "../../types/mod.ts";
 import type { Reader } from "../../util/reader.ts";
-import { decodeSignedVarint } from "../../util/varint.ts";
 
-const U32MAX = 0xFFFFFFFF;
-const I32MAX = (U32MAX - 1) / 2;
-const I32MIN = I32MAX - U32MAX;
-
-export function add(
-  _module: Compiled.Module,
-  _reader: Reader,
-  context: Compiled.FunctionContext,
-) {
-  const a = context.stack.pop();
-  const b = context.stack.pop();
-  if (!a || !b || a.kind !== "i32" || b.kind !== "i32") {
-    throw new Error(
-      `Expected [i32, i32]. Found [${a?.kind ?? "void"}, ${b?.kind ?? "void"}]`,
-    );
-  }
-
-  const val = a.value + b.value;
-  if (val < I32MIN) throw new RangeError("Byte underflow");
-  if (val > I32MAX) throw new RangeError("Byte overflow");
-
-  const res: Compiled.Value = { kind: "i32", value: val };
-  context.stack.push(res);
-}
-
-export function sub(
-  _module: Compiled.Module,
-  _reader: Reader,
-  context: Compiled.FunctionContext,
-) {
-  const a = context.stack.pop();
-  const b = context.stack.pop();
-  if (!a || !b || a.kind !== "i32" || b.kind !== "i32") {
-    throw new Error(
-      `Expected [i32, i32]. Found [${a?.kind ?? "void"}, ${b?.kind ?? "void"}]`,
-    );
-  }
-
-  const val = a.value - b.value;
-  if (val < I32MIN) throw new RangeError("Byte underflow");
-  if (val > I32MAX) throw new RangeError("Byte overflow");
-
-  const res: Compiled.Value = { kind: "i32", value: val };
-  context.stack.push(res);
-}
-
-export function mul(
-  _module: Compiled.Module,
-  _reader: Reader,
-  context: Compiled.FunctionContext,
-) {
-  const a = context.stack.pop();
-  const b = context.stack.pop();
-  if (!a || !b || a.kind !== "i32" || b.kind !== "i32") {
-    throw new Error(
-      `Expected [i32, i32]. Found [${a?.kind ?? "void"}, ${b?.kind ?? "void"}]`,
-    );
-  }
-
-  const val = a.value * b.value;
-  if (val < I32MIN) throw new RangeError("Byte underflow");
-  if (val > I32MAX) throw new RangeError("Byte overflow");
-
-  const res: Compiled.Value = { kind: "i32", value: val };
-  context.stack.push(res);
-}
-
-export function divS(
-  _module: Compiled.Module,
-  _reader: Reader,
-  context: Compiled.FunctionContext,
-) {
-  const a = context.stack.pop();
-  const b = context.stack.pop();
-  if (!a || !b || a.kind !== "i32" || b.kind !== "i32") {
-    throw new Error(
-      `Expected [i32, i32], Found [${a?.kind ?? "void"}, ${b?.kind ?? "void"}]`,
-    );
-  }
-
-  const val = Math.trunc(a.value / b.value);
-  if (val < I32MIN) throw new RangeError("Byte underflow");
-  if (val > I32MAX) throw new RangeError("Byte overflow");
-
-  const res: Compiled.Value = { kind: "i32", value: val };
-  context.stack.push(res);
-}
-
-export function divU(
-  _module: Compiled.Module,
-  _reader: Reader,
-  context: Compiled.FunctionContext,
-) {
-  const a = context.stack.pop();
-  const b = context.stack.pop();
-  if (!a || !b || a.kind !== "i32" || b.kind !== "i32") {
-    throw new Error(
-      `Expected [i32, i32], Found [${a?.kind ?? "void"}, ${b?.kind ?? "void"}]`,
-    );
-  }
-
-  const val = Math.trunc(Math.abs(a.value) / Math.abs(b.value));
-  if (val < I32MIN) throw new RangeError("Byte underflow");
-  if (val > I32MAX) throw new RangeError("Byte overflow");
-
-  const res: Compiled.Value = { kind: "i32", value: val };
-  context.stack.push(res);
-}
-
-export function remU(
-  _module: Compiled.Module,
-  _reader: Reader,
-  context: Compiled.FunctionContext,
-) {
-  const a = context.stack.pop();
-  const b = context.stack.pop();
-  if (!a || !b || a.kind !== "i32" || b.kind !== "i32") {
-    throw new Error(
-      `Expected [i32, i32], Found [${a?.kind ?? "void"}, ${b?.kind ?? "void"}]`,
-    );
-  }
-
-  const val = Math.abs(a.value) % Math.abs(b.value);
-  if (val < I32MIN) throw new RangeError("Byte underflow");
-  if (val > I32MAX) throw new RangeError("Byte overflow");
-
-  const res: Compiled.Value = { kind: "i32", value: val };
-  context.stack.push(res);
-}
-
-export function remS(
-  _module: Compiled.Module,
-  _reader: Reader,
-  context: Compiled.FunctionContext,
-) {
-  const a = context.stack.pop();
-  const b = context.stack.pop();
-  if (!a || !b || a.kind !== "i32" || b.kind !== "i32") {
-    throw new Error(
-      `Expected [i32, i32], Found [${a?.kind ?? "void"}, ${b?.kind ?? "void"}]`,
-    );
-  }
-
-  const val = a.value % b.value;
-  if (val < I32MIN) throw new RangeError("Byte underflow");
-  if (val > I32MAX) throw new RangeError("Byte overflow");
-
-  const res: Compiled.Value = { kind: "i32", value: val };
-  context.stack.push(res);
-}
-
-export function and(
-  _module: Compiled.Module,
-  _reader: Reader,
-  context: FunctionContext,
-) {
-  const a = context.stack.pop();
-  const b = context.stack.pop();
-  if (!a || !b || a.kind !== "i32" || b.kind !== "i32") {
-    throw new Error(
-      `Expected [i32, i32], Found [${a?.kind ?? "void"}, ${b?.kind ?? "void"}]`,
-    );
-  }
-
-  const val = a.value & b.value;
-  if (val < I32MIN) throw new RangeError("Byte underflow");
-  if (val > I32MAX) throw new RangeError("Byte overflow");
-
-  const res: Compiled.Value = { kind: "i32", value: val };
-  context.stack.push(res);
-}
+export const add = generateIntegerOperation("i32", "+");
+export const sub = generateIntegerOperation("i32", "-");
+export const mul = generateIntegerOperation("i32", "*");
+export const divS = generateIntegerOperation("i32", "/", true);
+export const divU = generateIntegerOperation("i32", "/", false);
+export const remS = generateIntegerOperation("i32", "%", true);
+export const remU = generateIntegerOperation("i32", "%", false);
+export const and = generateIntegerOperation("i32", "&");
+export const or = generateIntegerOperation("i32", "|");
 
 function constant(
   _module: Compiled.Module,
   reader: Reader,
-  context: FunctionContext,
+  context: Compiled.FunctionContext,
 ) {
   context.stack.push({ kind: "i32", value: decodeSignedVarint(reader) });
 }

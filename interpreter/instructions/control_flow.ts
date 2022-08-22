@@ -1,5 +1,5 @@
-import type { Compiled } from "../types/mod.ts";
-import type { Reader } from "../util/reader.ts";
+import type { Compiled } from "../../types/mod.ts";
+import type { Reader } from "../../util/reader.ts";
 
 export function end(
   _module: Compiled.Module,
@@ -7,6 +7,7 @@ export function end(
   context: Compiled.FunctionContext,
 ): boolean {
   // Throw if there is a unexpected end
+  console.log(context);
   if (context.cfStack.length === 0 && !reader.isConsumed()) {
     throw new Error("Unexpected end");
   }

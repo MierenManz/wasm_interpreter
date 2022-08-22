@@ -1,7 +1,7 @@
-import { decodeVarint } from "../util/varint.ts";
+import { decodeVarint } from "../../util/varint.ts";
 
-import type { Compiled } from "../types/mod.ts";
-import type { Reader } from "../util/reader.ts";
+import type { Compiled } from "../../types/mod.ts";
+import type { Reader } from "../../util/reader.ts";
 
 export function get(
   _module: Compiled.Module,
@@ -16,6 +16,7 @@ export function get(
   // Reference
   const val = context.locals[ptr];
   // Deep copy to push onto the stack
+  console.log(val);
   context.stack.push(structuredClone(val));
 }
 

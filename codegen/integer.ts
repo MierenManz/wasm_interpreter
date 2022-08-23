@@ -15,8 +15,8 @@ type OpFn = (
   context: Compiled.FunctionContext,
 ) => void;
 
-type MaybeSignedArithmicOp = "/" | "%" | ">>";
-type RegularArithmicOp =
+type MaybeSignedArithmeticOp = "/" | "%" | ">>";
+type RegularArithmeticOp =
   | "+"
   | "-"
   | "*"
@@ -25,7 +25,7 @@ type RegularArithmicOp =
   | "^"
   | "<<";
 
-type ArithmicOp = MaybeSignedArithmicOp | RegularArithmicOp;
+type ArithmeticOp = MaybeSignedArithmeticOp | RegularArithmeticOp;
 type Int = "i32" | "i64";
 
 function generateVal(name: string, intKind: Int, signed: boolean): string {
@@ -36,11 +36,11 @@ function generateVal(name: string, intKind: Int, signed: boolean): string {
 }
 
 // deno-fmt-ignore
-export function generateIntegerArithmicOp(intKind: Int, op: MaybeSignedArithmicOp, signed: boolean): OpFn;
+export function generateIntegerArithmeticOp(intKind: Int, op: MaybeSignedArithmeticOp, signed: boolean): OpFn;
 // deno-fmt-ignore
-export function generateIntegerArithmicOp(intKind: Int, op: RegularArithmicOp): OpFn;
+export function generateIntegerArithmeticOp(intKind: Int, op: RegularArithmeticOp): OpFn;
 // deno-fmt-ignore
-export function generateIntegerArithmicOp(intKind: Int, op: ArithmicOp, signed = false): OpFn {
+export function generateIntegerArithmeticOp(intKind: Int, op: ArithmeticOp, signed = false): OpFn {
   const errorMessage =
     `Expected [${intKind}, ${intKind}], but found [\${a?.kind ?? "void"}, \${b?.kind ?? "void"}]`;
 

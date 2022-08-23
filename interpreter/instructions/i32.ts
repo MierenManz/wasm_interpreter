@@ -1,4 +1,7 @@
-import { generateIntegerArithmeticOp } from "../../codegen/integer.ts";
+import {
+  generateIntComparisonOp,
+  generateIntegerArithmeticOp,
+} from "../../codegen/integer.ts";
 import { decodeSignedVarint } from "../../util/varint.ts";
 import type { Compiled } from "../../types/mod.ts";
 import type { Reader } from "../../util/reader.ts";
@@ -25,6 +28,16 @@ export const shrU = generateIntegerArithmeticOp("i32", ">>", false);
 // export const eqz;
 
 // Comparison Operations
+export const eq = generateIntComparisonOp("i32", "==");
+export const ne = generateIntComparisonOp("i32", "!=");
+export const ltS = generateIntComparisonOp("i32", "<", true);
+export const ltU = generateIntComparisonOp("i32", "<", false);
+export const leS = generateIntComparisonOp("i32", "<=", true);
+export const leU = generateIntComparisonOp("i32", "<=", false);
+export const gtS = generateIntComparisonOp("i32", ">", true);
+export const gtU = generateIntComparisonOp("i32", ">", false);
+export const geS = generateIntComparisonOp("i32", ">=", true);
+export const geU = generateIntComparisonOp("i32", ">=", false);
 
 function constant(
   _module: Compiled.Module,

@@ -15,8 +15,8 @@ type OpFn = (
   context: Compiled.FunctionContext,
 ) => void;
 
-type MaybeSignedIntOp = "/" | "%" | ">>";
-type NormalIntOp =
+type MaybeSignedArithmicOp = "/" | "%" | ">>";
+type RegularArithmicOp =
   | "+"
   | "-"
   | "*"
@@ -25,7 +25,7 @@ type NormalIntOp =
   | "^"
   | "<<";
 
-type IntOp = MaybeSignedIntOp | NormalIntOp;
+type ArithmicOp = MaybeSignedArithmicOp | RegularArithmicOp;
 type Int = "i32" | "i64";
 
 function generateVal(name: string, intKind: Int, signed: boolean): string {
@@ -36,10 +36,11 @@ function generateVal(name: string, intKind: Int, signed: boolean): string {
 }
 
 // deno-fmt-ignore
-export function generateIntegerOperation(intKind: Int, op: MaybeSignedIntOp, signed: boolean): OpFn;
-export function generateIntegerOperation(intKind: Int, op: NormalIntOp): OpFn;
+export function generateIntegerArithmicOp(intKind: Int, op: MaybeSignedArithmicOp, signed: boolean): OpFn;
 // deno-fmt-ignore
-export function generateIntegerOperation(intKind: Int, op: IntOp, signed = false): OpFn {
+export function generateIntegerArithmicOp(intKind: Int, op: RegularArithmicOp): OpFn;
+// deno-fmt-ignore
+export function generateIntegerArithmicOp(intKind: Int, op: ArithmicOp, signed = false): OpFn {
   const errorMessage =
     `Expected [${intKind}, ${intKind}], but found [\${a?.kind ?? "void"}, \${b?.kind ?? "void"}]`;
 
@@ -54,10 +55,39 @@ export function generateIntegerOperation(intKind: Int, op: IntOp, signed = false
       throw new Error(\`${errorMessage}\`)
     }
 
-    const val = (${valueA} ${op} ${valueB});;
+    const val = (${valueA} ${op} ${valueB});
     if (val < (${MIN})) throw new RangeError("Byte underflow");
     if (val > ${MAX}) throw new RangeError("Byte overflow");
     context.stack.push({ kind: "${intKind}", value: val });
+  `;
+
+  return new Function("module", "reader", "context", body) as OpFn;
+}
+
+type MaybeSignedComparisonOp = "<" | "<=" | ">" | ">=";
+type RegularComparisonOp = "==" | "!=";
+type IntComparisonOp = MaybeSignedComparisonOp | RegularComparisonOp;
+
+// deno-fmt-ignore
+export function generateIntComparisonOp(intKind: Int, op: RegularComparisonOp): OpFn;
+// deno-fmt-ignore
+export function generateIntComparisonOp(intKind: Int, op: MaybeSignedComparisonOp, signed: boolean): OpFn;
+// deno-fmt-ignore
+export function generateIntComparisonOp(intKind: Int, op: IntComparisonOp, signed = false): OpFn {
+  const errorMessage =
+  `Expected [${intKind}, ${intKind}], but found [\${a?.kind ?? "void"}, \${b?.kind ?? "void"}]`;
+
+  const valueA = generateVal("a", intKind, signed);
+  const valueB = generateVal("b", intKind, signed);
+  const ret = intKind === "i32" ? "1 : 0" : "1n : 0n"; 
+  const body = `
+    const a = context.stack.pop();
+    const b = context.stack.pop();
+    if (!a || !b || a.kind !== "${intKind}" || b.kind !== "${intKind}") {
+      throw new Error(\`${errorMessage}\`)
+    }
+
+    context.stack.push({kind: "${intKind}", value: ${valueA} ${op} ${valueB} ? ${ret}});
   `;
 
   return new Function("module", "reader", "context", body) as OpFn;

@@ -6,7 +6,7 @@ import { decodeImport } from "./decoders/import_section.ts";
 import { decodeVarint } from "./util/varint.ts";
 import { decodeFnBody } from "./decoders/code_section.ts";
 import { decodeTable } from "./decoders/table_section.ts";
-import { generateFunctions } from "./generators/codegen.ts";
+import { generateFunctions } from "./generators/fn.ts";
 import { generateExports } from "./generators/export.ts";
 import { interpret } from "./interpreter/mod.ts";
 import { decodeExport } from "./decoders/export_section.ts";

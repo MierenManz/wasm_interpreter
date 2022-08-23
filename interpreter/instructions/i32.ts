@@ -3,7 +3,7 @@ import { decodeSignedVarint } from "../../util/varint.ts";
 import type { Compiled } from "../../types/mod.ts";
 import type { Reader } from "../../util/reader.ts";
 
-// Arithmetic operations
+// Arithmetic Operations
 export const add = generateIntegerArithmeticOp("i32", "+");
 export const sub = generateIntegerArithmeticOp("i32", "-");
 export const mul = generateIntegerArithmeticOp("i32", "*");
@@ -17,6 +17,14 @@ export const xor = generateIntegerArithmeticOp("i32", "^");
 export const shl = generateIntegerArithmeticOp("i32", "<<");
 export const shrS = generateIntegerArithmeticOp("i32", ">>", true);
 export const shrU = generateIntegerArithmeticOp("i32", ">>", false);
+// export const rotl;
+// export const rotr;
+// export const clz;
+// export const ctz;
+// export const popcnt;
+// export const eqz;
+
+// Comparison Operations
 
 function constant(
   _module: Compiled.Module,

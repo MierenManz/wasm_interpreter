@@ -7,7 +7,6 @@ export function end(
   context: Compiled.FunctionContext,
 ): boolean {
   // Throw if there is a unexpected end
-  console.log(context);
   if (context.cfStack.length === 0 && !reader.isConsumed()) {
     throw new Error("Unexpected end");
   }

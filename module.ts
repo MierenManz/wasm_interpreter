@@ -25,7 +25,7 @@ const KIND_TO_DECODER: Record<
     mod.memorySection = decodeArray(reader, decodeResizableLimits),
   // 0x06: "globalSection",
   0x07: (reader, mod) => mod.exportSection = decodeArray(reader, decodeExport),
-  // 0x08: "startSection",
+  0x08: (reader, mod) => mod.startSection = decodeVarint(reader),
   // 0x09: "elementSection",
   0x0A: (reader, mod) => mod.codeSection = decodeArray(reader, decodeFnBody),
   // 0x0B: "dataSection",

@@ -15,6 +15,7 @@ type OpFn = (
   context: Compiled.FunctionContext,
 ) => void;
 
+// >> may need to be changed to >>>
 type MaybeSignedArithmeticOp = "/" | "%" | ">>";
 type RegularArithmeticOp =
   | "+"

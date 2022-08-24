@@ -61,6 +61,7 @@ export function generateFunctions(
       };
 
       interpret(mod, new Reader(instructions), context);
+      if (context.stack.length === 0) return context.stack[0].value;
       return context.stack.map(x => x.value);
     };`;
     const fn = new Function(

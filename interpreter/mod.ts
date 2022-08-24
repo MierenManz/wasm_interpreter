@@ -28,7 +28,14 @@ const instructions: Instructions = {
   0x6E: I32.divU,
   0x6F: I32.remS,
   0x70: I32.remU,
-
+  0x71: I32.and,
+  0x72: I32.or,
+  0x73: I32.xor,
+  0x74: I32.shl,
+  0x75: I32.shrS,
+  0x76: I32.shrU,
+  0x77: I32.rotl,
+  0x41: I32.const,
   // Control flow instructions
   0x0B: ControlFlow.end,
 };
@@ -40,8 +47,11 @@ export function interpret(
 ) {
   let stop = false;
   while (!reader.isConsumed() && !stop) {
-    const instructionCall = instructions[reader.readUint8()];
-    if (instructionCall === undefined) throw new Error("Unknown instruction");
+    const op = reader.readUint8();
+    const instructionCall = instructions[op];
+    if (instructionCall === undefined) {
+      throw new Error("Unknown instruction: 0x" + op.toString(16));
+    }
     stop = !!instructionCall(module, reader, context);
   }
 }

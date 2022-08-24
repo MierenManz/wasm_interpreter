@@ -16,8 +16,7 @@ export function get(
   // Reference
   const val = context.locals[ptr];
   // Deep copy to push onto the stack
-  console.log(val);
-  context.stack.push(structuredClone(val));
+  context.stack.push({ kind: val.kind, value: val.value });
 }
 
 export function set(

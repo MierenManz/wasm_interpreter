@@ -5,4 +5,4 @@ const module = instantiateModule(
   bytes,
 );
 
-console.log(module.add(1.5, 5));
+console.log(module.add(1, 5));

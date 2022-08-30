@@ -54,7 +54,7 @@ export function generateFunctions(
       const context = {
         stack: [],
         locals: [${paramsObjects},${
-      locals.map((x) => `{ value: 0, kind: ${x} }`)
+      locals.map((x) => `{ value: 0, kind: "${x}" }`)
     }],
         result: [${result}],
         cfStack: [],

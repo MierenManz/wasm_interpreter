@@ -53,7 +53,7 @@ export function tee(
   const local = context.locals[ptr];
 
   // v is a Reference. It's still on the stack
-  const v = context.stack.at(-1);
+  const v = context.stack[context.stack.length];
   if (!v || v.kind !== local.kind) {
     throw new TypeError(
       `Expected Type ${local.kind}, Found ${v?.kind ?? "void"}`,

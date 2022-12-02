@@ -1,5 +1,12 @@
-export type ValueKind = "i32" | "i64" | "f32" | "f64" | "v128";
-export type Signatures = ValueKind | "func" | "funcref";
+export type ValueKind =
+  | "i32"
+  | "i64"
+  | "f32"
+  | "f64"
+  | "v128"
+  | "funcref"
+  | "externref";
+export type Signatures = ValueKind | "func";
 
 export type ExternalKind = "func" | "table" | "memory" | "global";
 

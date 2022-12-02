@@ -1,6 +1,6 @@
 import { instantiateModule } from "./module.ts";
 
-const bytes = Deno.readFileSync("mod.wasm");
+const bytes = Deno.readFileSync("../wasm_export_gen/change_case.wasm");
 const module = instantiateModule(
   bytes,
 );

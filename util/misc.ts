@@ -5,6 +5,7 @@ export const VALUE_KIND: Record<number, ValueKind> = {
   0x7E: "i64",
   0x7D: "f32",
   0x7C: "f64",
+  0x7B: "v128",
 };
 
 export const EXTERNAL_KIND: ExternalKind[] = [

@@ -31,7 +31,7 @@ const KIND_TO_DECODER: Record<
   // 0x0B: "dataSection",
 };
 
-function decodeModule(reader: Reader): Decoded.Module {
+export function decodeModule(reader: Reader): Decoded.Module {
   const decodedModule: Decoded.Module = {
     typeSection: [],
     importSection: [],

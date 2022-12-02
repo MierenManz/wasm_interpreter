@@ -14,7 +14,7 @@ export function decodeFnBody(reader: Reader): FunctionBody {
   const instructionSize = totalBodySize - (reader.getReadHead() - preLocalHead);
 
   const instructions = reader.readSlice(instructionSize);
-  if (instructionSize !== instructions.length || !reader.isConsumed()) {
+  if (instructionSize !== instructions.length || (instructions.at(-1) !== 0x0B && instructionSize > 0)) {
     throw new Error("Invalid total body length");
   }
 

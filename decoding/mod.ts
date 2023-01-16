@@ -5,6 +5,8 @@ import { decodeTableSection } from "./tables.ts";
 import { varintDecode } from "./varint.ts";
 import { decodeMemorySection } from "./memories.ts";
 import type { DecodedModule } from "../types/module/decoded.ts";
+import { decodeGlobalSection } from "./globals.ts";
+import { decodeExportSection } from "./exports.ts";
 
 const WASM_COOKIE = 0x6D736100;
 const WASM_VERSION = 1;
@@ -24,13 +26,9 @@ const DECODERS: Decoder[] = [
   /** Memory */
   decodeMemorySection,
   /** Globals */
-  () => {
-    // throw TODO_ERROR;
-  },
+  decodeGlobalSection,
   /** Exports */
-  () => {
-    // throw TODO_ERROR;
-  },
+  decodeExportSection,
   /** Start */
   () => {
     // throw TODO_ERROR;

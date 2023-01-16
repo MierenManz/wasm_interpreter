@@ -13,7 +13,7 @@ const INSTR_TO_INITIAL: Record<
   0x44: (b) => [new DataView(b.buffer, b.byteOffset, 8).getFloat64(0, true), 8],
 };
 
-export function decodeGlobal(bytes: Uint8Array): Result<DecodedGlobal> {
+function decodeGlobal(bytes: Uint8Array): Result<DecodedGlobal> {
   const valtype = VAL_TYPES[bytes[0]];
   if (!valtype) throw new Error("Unknown Value Type");
   const mutable = bytes[1] === 1;

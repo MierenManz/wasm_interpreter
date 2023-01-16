@@ -69,8 +69,12 @@ export type DecodedImport =
   )
   & Exclude<ImportBase, "kind">;
 
-type ExternalKind = "func" | "table" | "memory" | "global";
-type DecodedExport = BasicIdent<ExternalKind> & { index: number };
+export type ExternalKind = "func" | "table" | "memory" | "global";
+export interface DecodedExport {
+  kind: ExternalKind;
+  index: number;
+  exportName: string;
+}
 
 interface DecodedElementBase {
   initial: number[];

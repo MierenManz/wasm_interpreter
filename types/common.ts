@@ -1,22 +1,15 @@
-export type ValueKind =
-  | "i32"
-  | "i64"
-  | "f32"
-  | "f64"
-  | "v128"
-  | "funcref"
-  | "externref";
-export type Signatures = ValueKind | "func";
+export type BasicIdent<N extends string> = { kind: N };
+export type MemoryArg = { align: number; offset: number };
 
-export type ExternalKind = "func" | "table" | "memory" | "global";
+export type NumType = "i32" | "i64" | "f32" | "f64";
+export type RefType = "funcref" | "externref";
+export type VecType = "v128";
 
-/** Descriptor for both `table` and `memory` */
-export interface ResizableLimits {
-  min: number;
-  max?: number;
+export type ValType = NumType | RefType; // | VecType;
+
+export interface FnType {
+  params: ValType[];
+  result: ValType[];
 }
 
-export interface GlobalDescriptor {
-  kind: ValueKind;
-  mutable: boolean;
-}
+export type Result<T> = { value: T; bytesConsumed: number };

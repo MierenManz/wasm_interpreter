@@ -1,0 +1,3 @@
+interface ParsedModule {
+  functions: void[];
+}

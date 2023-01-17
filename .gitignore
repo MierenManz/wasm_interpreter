@@ -1,2 +1,3 @@
 *.wasm
 *.wat
+test_runner/tests/*

@@ -3,7 +3,6 @@ import { run } from "./_util.ts";
 const TEST_SUITE_URL = new URL("../testsuite/", import.meta.url);
 const OUTPUT_DIR = new URL("./tests/", import.meta.url);
 
-
 export async function setup() {
   await Deno.mkdir(OUTPUT_DIR, { recursive: true });
   Deno.chdir(OUTPUT_DIR);
@@ -29,7 +28,7 @@ export async function setup() {
     await Deno.remove(inputURL);
   }
 
-  console.log("Setup complete!")
+  console.log("Setup complete!");
 }
 
 if (import.meta.main) {

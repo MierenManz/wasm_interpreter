@@ -1,5 +1,6 @@
 import { varintDecode } from "./varint.ts";
 import { decodeResizableLimits } from "./util.ts";
+import { DecodingError } from "../error.ts";
 import type { RefType, Result } from "../types/common.ts";
 import type { DecodedModule, DecodedTable } from "../types/module/decoded.ts";
 
@@ -10,7 +11,7 @@ const REF_TYPE: Record<number, RefType> = {
 
 function decodeTable(bytes: Uint8Array): Result<DecodedTable> {
   const refType = REF_TYPE[bytes[0]];
-  if (!refType) throw new Error("Unknown Reference Type");
+  if (!refType) throw new DecodingError("Unknown Reference Type");
 
   const limits = decodeResizableLimits(bytes.subarray(1));
 

@@ -4,10 +4,10 @@ import { decodeFuncSection } from "./funcs.ts";
 import { decodeTableSection } from "./tables.ts";
 import { varintDecode } from "./varint.ts";
 import { decodeMemorySection } from "./memories.ts";
-import type { DecodedModule } from "../types/module/decoded.ts";
 import { decodeGlobalSection } from "./globals.ts";
 import { decodeExportSection } from "./exports.ts";
-
+import { DecodingError, ValidationError } from "../error.ts";
+import type { DecodedModule } from "../types/module/decoded.ts";
 const WASM_COOKIE = 0x6D736100;
 const WASM_VERSION = 1;
 const TODO_ERROR = new Error("TODO!");
@@ -83,8 +83,10 @@ export function decodeModule(
     if (sectionID === 0) i--;
 
     if (sectionID !== 0 && sectionID <= i) {
-      throw new Error(`Unexpected section: ${sectionID}`);
+      throw new ValidationError(`Unexpected section: ${sectionID}`);
     }
+
+    i = sectionID;
 
     const [sectionLength, sectionBase] = varintDecode(bytes);
 
@@ -95,9 +97,7 @@ export function decodeModule(
     bytes = bytes.subarray(sectionBase + sectionLength);
 
     const sectionDecoder = DECODERS[sectionID];
-    // console.log(sectionID)
-    // console.log(sectionDecoder);
-    if (!sectionDecoder) throw new Error("Unknown section");
+    if (!sectionDecoder) throw new DecodingError("Unknown section");
 
     sectionDecoder(module, sectionBytes);
   }

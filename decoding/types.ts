@@ -1,5 +1,6 @@
 import { varintDecode } from "./varint.ts";
 import { VAL_TYPES } from "./util.ts";
+import { DecodingError, ValidationError } from "../error.ts";
 import type { Result, ValType } from "../types/common.ts";
 import type { DecodedModule } from "../types/module/decoded.ts";
 
@@ -9,7 +10,7 @@ function decodeParameters(bytes: Uint8Array): Result<ValType[]> {
 
   for (let i = 0; i < paramCount; i++) {
     const param = VAL_TYPES[bytes[paramOffset + i]];
-    if (!param) throw new Error("Unknown Valtype");
+    if (!param) throw new DecodingError("Unknown Valtype");
 
     params[i] = param;
   }
@@ -27,7 +28,7 @@ export function decodeTypeSection(module: DecodedModule, bytes: Uint8Array) {
 
   for (let i = 0; i < count; i++) {
     const signature = bytes[0];
-    if (signature !== 0x60) throw new Error("Unknown type signature");
+    if (signature !== 0x60) throw new ValidationError("Unknown type signature");
     bytes = bytes.subarray(1);
 
     const params = decodeParameters(bytes);

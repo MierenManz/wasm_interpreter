@@ -1,4 +1,5 @@
 import { varintDecode } from "./varint.ts";
+import { ValidationError } from "../error.ts";
 import type { Result, ValType } from "../types/common.ts";
 import type { ResizableLimits } from "../types/module/decoded.ts";
 
@@ -27,7 +28,7 @@ export function decodeResizableLimits(
 
   if (bitfield === 1) {
     const [max, bytesUsed] = varintDecode(bytes);
-    if (max < min) throw new Error("Max cannot be smaller than minimum");
+    if (max < min) throw new ValidationError("Max cannot be smaller than minimum");
     result.value.max = max;
     result.bytesConsumed += bytesUsed;
   }

@@ -1,5 +1,6 @@
 import { varintDecode, varlongDecode } from "./varint.ts";
 import { VAL_TYPES } from "./util.ts";
+import { DecodingError } from "../error.ts";
 import type { Result } from "../types/common.ts";
 import type { DecodedGlobal, DecodedModule } from "../types/module/decoded.ts";
 
@@ -15,10 +16,10 @@ const INSTR_TO_INITIAL: Record<
 
 function decodeGlobal(bytes: Uint8Array): Result<DecodedGlobal> {
   const valtype = VAL_TYPES[bytes[0]];
-  if (!valtype) throw new Error("Unknown Value Type");
+  if (!valtype) throw new DecodingError("Unknown Value Type");
   const mutable = bytes[1] === 1;
   const initialResolver = INSTR_TO_INITIAL[bytes[2]];
-  if (!initialResolver) throw new Error("Unknown Initial expression");
+  if (!initialResolver) throw new DecodingError("Unknown Initial expression");
 
   const [initial, bytesConsumed] = initialResolver(bytes.subarray(3));
   return {

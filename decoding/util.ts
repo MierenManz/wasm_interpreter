@@ -28,7 +28,9 @@ export function decodeResizableLimits(
 
   if (bitfield === 1) {
     const [max, bytesUsed] = varintDecode(bytes);
-    if (max < min) throw new ValidationError("Max cannot be smaller than minimum");
+    if (max < min) {
+      throw new ValidationError("Max cannot be smaller than minimum");
+    }
     result.value.max = max;
     result.bytesConsumed += bytesUsed;
   }

@@ -9,6 +9,7 @@ import { decodeExportSection } from "./exports.ts";
 import { decodeStartSection } from "./start.ts";
 import { DecodingError, ValidationError } from "../error.ts";
 import type { DecodedModule } from "../types/module/decoded.ts";
+
 const WASM_COOKIE = 0x6D736100;
 const WASM_VERSION = 1;
 const TODO_ERROR = new Error("TODO!");
@@ -36,10 +37,15 @@ const DECODERS: Decoder[] = [
   () => {
     // throw TODO_ERROR;
   },
-  /**  */
+  /** Code */
   () => {
     // throw TODO_ERROR;
   },
+  /** Data */
+  () => {
+    // throw TODO_ERROR;
+  },
+  /** Data segments */
   () => {
     // throw TODO_ERROR;
   },
@@ -50,8 +56,10 @@ export function decodeModule(
 ): DecodedModule {
   const buff = new Uint32Array(bytes.buffer, 0, 2);
 
-  if (buff[0] !== WASM_COOKIE) throw new Error("Bad WASM Cookie");
-  if (buff[1] !== WASM_VERSION) throw new Error("Unsupported Version");
+  if (buff[0] !== WASM_COOKIE) throw new ValidationError("Bad WASM Cookie");
+  if (buff[1] !== WASM_VERSION) {
+    throw new ValidationError("Unsupported Version");
+  }
 
   const module: DecodedModule = {
     customSection: [],

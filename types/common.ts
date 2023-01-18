@@ -7,7 +7,7 @@ export type VecType = "v128";
 
 export type ValType = NumType | RefType; // | VecType;
 
-export interface FnType {
+export interface BlockType {
   params: ValType[];
   result: ValType[];
 }

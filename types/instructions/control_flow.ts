@@ -1,4 +1,4 @@
-import type { BasicIdent, ValType } from "../common.ts";
+import type { BasicIdent, BlockType } from "../common.ts";
 
 export type Unreachable = BasicIdent<"unreachable">;
 export type Nop = BasicIdent<"nop">;
@@ -6,7 +6,7 @@ export type Nop = BasicIdent<"nop">;
 export interface Loop {
   kind: "loop";
   /** Return type (needs assertion) */
-  blockKind: ValType[];
+  blockKind: BlockType;
   /** Index to jump to */
   depth: number;
 }
@@ -14,7 +14,7 @@ export interface Loop {
 export interface Block {
   kind: "block";
   /** Return type (needs assertion) */
-  blockKind: ValType[];
+  blockKind: BlockType;
   /** Index to jump to */
   depth: number;
 }
@@ -22,7 +22,7 @@ export interface Block {
 export interface If {
   kind: "if";
   /** Return type (needs assertion) */
-  blockKind: ValType[];
+  blockKind: BlockType;
   /** Index to jump to if condition is true */
   jmpTrue: number;
 

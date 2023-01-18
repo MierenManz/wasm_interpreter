@@ -1,4 +1,4 @@
-import type { BasicIdent, FnType, RefType, ValType } from "../common.ts";
+import type { BasicIdent, BlockType, RefType, ValType } from "../common.ts";
 import type { Instruction } from "../instructions/mod.ts";
 
 export interface ResizableLimits {
@@ -121,7 +121,7 @@ interface CustomSection {
 
 export interface DecodedModule {
   customSection: CustomSection[];
-  types: FnType[];
+  types: BlockType[];
   imports: DecodedImport[];
   funcs: number[];
   tables: DecodedTable[];

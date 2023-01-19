@@ -1,4 +1,4 @@
-import { varintDecode } from "./varint.ts";
+import { decode32 } from "../deps.ts";
 import { decodeString } from "./util.ts";
 import { DecodingError, ValidationError } from "../error.ts";
 import type { Result } from "../types/common.ts";
@@ -33,7 +33,7 @@ function decodeExport(bytes: Uint8Array): Result<DecodedExport> {
 
   if (!kind) throw new DecodingError("Unknown External kind");
 
-  const [index, consumed] = varintDecode(bytes);
+  const [index, consumed] = decode32(bytes);
 
   return {
     value: {
@@ -46,7 +46,7 @@ function decodeExport(bytes: Uint8Array): Result<DecodedExport> {
 }
 
 export function decodeExportSection(module: DecodedModule, bytes: Uint8Array) {
-  const [count, offset] = varintDecode(bytes);
+  const [count, offset] = decode32(bytes);
 
   bytes = bytes.subarray(offset);
 

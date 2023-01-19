@@ -1,11 +1,11 @@
-import { varintDecode } from "./varint.ts";
+import { decode32 } from "../deps.ts";
 import { VAL_TYPES } from "./util.ts";
 import { DecodingError, ValidationError } from "../error.ts";
 import type { Result, ValType } from "../types/common.ts";
 import type { DecodedModule } from "../types/module/decoded.ts";
 
 function decodeParameters(bytes: Uint8Array): Result<ValType[]> {
-  const [paramCount, paramOffset] = varintDecode(bytes);
+  const [paramCount, paramOffset] = decode32(bytes);
   const params = new Array(paramCount);
 
   for (let i = 0; i < paramCount; i++) {
@@ -22,7 +22,7 @@ function decodeParameters(bytes: Uint8Array): Result<ValType[]> {
 }
 
 export function decodeTypeSection(module: DecodedModule, bytes: Uint8Array) {
-  const [count, offset] = varintDecode(bytes);
+  const [count, offset] = decode32(bytes);
 
   bytes = bytes.subarray(offset);
 

@@ -1,0 +1,1 @@
+export { decode32, decode as decode64 } from "https://deno.land/x/varint@v2.0.0/varint.ts";

@@ -1,4 +1,4 @@
-import { varintDecode } from "./varint.ts";
+import { decode32 } from "../deps.ts";
 import { decodeResizableLimits } from "./util.ts";
 import { DecodingError } from "../error.ts";
 import type { RefType, Result } from "../types/common.ts";
@@ -22,7 +22,7 @@ function decodeTable(bytes: Uint8Array): Result<DecodedTable> {
 }
 
 export function decodeTableSection(module: DecodedModule, bytes: Uint8Array) {
-  const [count, offset] = varintDecode(bytes);
+  const [count, offset] = decode32(bytes);
 
   bytes = bytes.subarray(offset);
 

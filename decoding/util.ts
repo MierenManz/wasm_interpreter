@@ -1,4 +1,4 @@
-import { varintDecode } from "./varint.ts";
+import { decode32 } from "../deps.ts";
 import { ValidationError } from "../error.ts";
 import type { Result, ValType } from "../types/common.ts";
 import type { ResizableLimits } from "../types/module/decoded.ts";
@@ -18,7 +18,7 @@ export function decodeResizableLimits(
   bytes: Uint8Array,
 ): Result<ResizableLimits> {
   const bitfield = bytes[0];
-  const [min, bytesUsed] = varintDecode(bytes.subarray(1));
+  const [min, bytesUsed] = decode32(bytes.subarray(1));
   bytes = bytes.subarray(bytesUsed + 1);
 
   const result: Result<ResizableLimits> = {
@@ -27,7 +27,7 @@ export function decodeResizableLimits(
   };
 
   if (bitfield === 1) {
-    const [max, bytesUsed] = varintDecode(bytes);
+    const [max, bytesUsed] = decode32(bytes);
     if (max < min) {
       throw new ValidationError("Max cannot be smaller than minimum");
     }
@@ -39,7 +39,7 @@ export function decodeResizableLimits(
 }
 
 export function decodeString(bytes: Uint8Array): Result<string> {
-  const [len, consumed] = varintDecode(bytes);
+  const [len, consumed] = decode32(bytes);
 
   return {
     value: TEXT_DECODER.decode(bytes.subarray(consumed, consumed + len)),

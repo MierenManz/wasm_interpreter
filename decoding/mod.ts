@@ -2,7 +2,7 @@ import { decodeCustomSection } from "./custom.ts";
 import { decodeTypeSection } from "./types.ts";
 import { decodeFuncSection } from "./funcs.ts";
 import { decodeTableSection } from "./tables.ts";
-import { varintDecode } from "./varint.ts";
+import { decode32 } from "../deps.ts";
 import { decodeMemorySection } from "./memories.ts";
 import { decodeGlobalSection } from "./globals.ts";
 import { decodeExportSection } from "./exports.ts";
@@ -35,19 +35,19 @@ const DECODERS: Decoder[] = [
   decodeStartSection,
   /** Elements */
   () => {
-    // throw TODO_ERROR;
+    throw TODO_ERROR;
   },
   /** Code */
   () => {
-    // throw TODO_ERROR;
+    throw TODO_ERROR;
   },
   /** Data */
   () => {
-    // throw TODO_ERROR;
+    throw TODO_ERROR;
   },
   /** Data segments */
   () => {
-    // throw TODO_ERROR;
+    throw TODO_ERROR;
   },
 ];
 
@@ -95,7 +95,7 @@ export function decodeModule(
 
     i = sectionID;
 
-    const [sectionLength, sectionBase] = varintDecode(bytes);
+    const [sectionLength, sectionBase] = decode32(bytes);
 
     const sectionBytes = bytes.subarray(
       sectionBase,

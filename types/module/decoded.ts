@@ -91,7 +91,7 @@ interface DecodedActiveElement {
   offset: number;
 }
 
-type DecodedElement =
+export type DecodedElement =
   & (DecodedPassiveElement | DecodedActiveElement)
   & DecodedElementBase;
 

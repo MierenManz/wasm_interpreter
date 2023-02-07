@@ -95,7 +95,7 @@ export type DecodedElement =
   & (DecodedPassiveElement | DecodedActiveElement)
   & DecodedElementBase;
 
-interface DecodedCodeBlock {
+export interface DecodedCodeBlock {
   locals: ValType[];
   instructions: Instruction;
 }

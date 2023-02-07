@@ -9,6 +9,7 @@ import { decodeExportSection } from "./exports.ts";
 import { decodeStartSection } from "./start.ts";
 import { DecodingError, ValidationError } from "../error.ts";
 import type { DecodedModule } from "../types/module/decoded.ts";
+import { decodeCodeSection } from "./codeblocks.ts";
 
 const WASM_COOKIE = 0x6D736100;
 const WASM_VERSION = 1;
@@ -38,9 +39,7 @@ const DECODERS: Decoder[] = [
     throw TODO_ERROR;
   },
   /** Code */
-  () => {
-    throw TODO_ERROR;
-  },
+  decodeCodeSection,
   /** Data */
   () => {
     throw TODO_ERROR;
